@@ -37,6 +37,7 @@
 		"vite": "^7.1.10"
 	},
 	"dependencies": {
-		"@webcontainer/api": "^1.6.1"
+		"@webcontainer/api": "^1.6.1",
+		"@xterm/xterm": "^5.5.0"
 	}
 }

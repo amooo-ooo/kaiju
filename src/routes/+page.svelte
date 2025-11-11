@@ -1,48 +1,60 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+
 	import { WebContainer } from '@webcontainer/api';
 	import type { WebContainer as WebContainerType } from '@webcontainer/api';
+	import type { Terminal } from '@xterm/xterm';
+
 	import { files } from './files.js';
 
-	let webcontainerInstance = $state<WebContainerType | null>(null);
+	let webcontainer = $state<WebContainerType | null>(null);
+	let terminal = $state<Terminal | null>(null);
+	let terminalElement = $state<HTMLDivElement | null>(null);
 	let textareaContent = $state(files['index.js'].file.contents);
 	let iframeSrc = $state('');
 	let status = $state('Booting WebContainer...');
 
 	async function installDependencies() {
-		if (!webcontainerInstance) return -1;
+		if (!webcontainer || !terminal) return -1;
 
-        // Install dependencies
+		// Install dependencies
 		status = 'Installing dependencies...';
-		const installProcess = await webcontainerInstance.spawn('npm', ['install']);
-		installProcess.output.pipeTo(new WritableStream({
-			write(data) {
-				console.log(data);
-			}
-		}));
+		const installProcess = await webcontainer.spawn('npm', ['install']);
+		installProcess.output.pipeTo(
+			new WritableStream({
+				write(data) {
+					terminal?.write(data);
+				}
+			})
+		);
 
-        // Wait for install command to exit
+		// Wait for install command to exit
 		return installProcess.exit;
 	}
 
 	async function startDevServer() {
-		if (!webcontainerInstance) return;
+		if (!webcontainer || !terminal) return;
 
-        // Run `npm run start` to start the Express app
-		webcontainerInstance.spawn('npm', ['run', 'start']);
+		// Run `npm run start` to start the Express app
+		const serverProcess = await webcontainer.spawn('npm', ['run', 'start']);
+		serverProcess.output.pipeTo(
+			new WritableStream({
+				write(data) {
+					terminal?.write(data);
+				}
+			})
+		);
 
-        // Wait for `server-ready` event
 		status = 'Starting server...';
-		webcontainerInstance.on('server-ready', (port, url) => {
-			console.log('Server ready on port', port, 'at URL', url);
+		webcontainer.on('server-ready', (port, url) => {
 			iframeSrc = url;
 			status = '';
 		});
 	}
 
 	async function writeIndexJS(content: string) {
-		if (!webcontainerInstance) return;
-		await webcontainerInstance.fs.writeFile('/index.js', content);
+		if (!webcontainer) return;
+		await webcontainer.fs.writeFile('/index.js', content);
 	}
 
 	function handleTextareaInput(e: Event) {
@@ -52,8 +64,16 @@
 	}
 
 	onMount(async () => {
-		webcontainerInstance = await WebContainer.boot();
-		await webcontainerInstance.mount(files);
+		const { Terminal } = await import('@xterm/xterm');
+		await import('@xterm/xterm/css/xterm.css');
+
+		webcontainer = await WebContainer.boot();
+		await webcontainer.mount(files);
+
+		terminal = new Terminal({ convertEol: true });
+		if (terminalElement) {
+			terminal.open(terminalElement);
+		}
 
 		const exitCode = await installDependencies();
 		if (exitCode !== 0) {
@@ -67,6 +87,7 @@
 <div class="container">
 	<div class="editor">
 		<textarea value={textareaContent} oninput={handleTextareaInput}></textarea>
+		<div class="terminal" bind:this={terminalElement}></div>
 	</div>
 	<div class="preview">
 		{#if status}
@@ -104,6 +125,11 @@
 		font-size: 14px;
 		border: 1px solid #ccc;
 		resize: none;
+	}
+
+	.terminal {
+		flex: 1;
+		overflow: hidden;
 	}
 
 	iframe {
