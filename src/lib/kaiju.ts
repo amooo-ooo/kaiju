@@ -1,5 +1,5 @@
 import { WebContainer } from '@webcontainer/api';
-import type { SpawnOptions, WebContainerProcess } from '@webcontainer/api';
+import type { BootOptions, SpawnOptions, WebContainerProcess } from '@webcontainer/api';
 import type { Terminal } from '@xterm/xterm';
 
 interface RunOptions extends SpawnOptions {
@@ -40,8 +40,8 @@ export class KaijuContainer extends WebContainer {
 		return { ...process, stdout };
 	}
 
-	static override async boot(): Promise<KaijuContainer> {
-		const containerInstance = await super.boot();
+	static override async boot(options?: BootOptions): Promise<KaijuContainer> {
+		const containerInstance = await super.boot(options);
 		const kaijuContainer = new KaijuContainer();
 		Object.assign(kaijuContainer, containerInstance);
 		return kaijuContainer;

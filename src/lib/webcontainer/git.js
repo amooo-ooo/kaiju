@@ -12,7 +12,7 @@ if (!command || !argsJson) {
 }
 
 const httpsAgent = new https.Agent({
-  timeout: 32000, // 32 seconds
+  timeout: 60000, // 60 seconds
 });
 
 const customHttpClient = {
