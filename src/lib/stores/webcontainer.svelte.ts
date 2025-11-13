@@ -34,9 +34,11 @@ class WebContainerStore {
 
 		await this.container.run('mkdir', ['repo']);
 
-		await this.git.clone({
+		await this.git.smartClone({
 			// url: 'https://github.com/arthelokyo/astrowind',
-			url: 'https://github.com/rahxd1/simple-vite-template-vanilla',
+			// url: 'https://github.com/rahxd1/simple-vite-template-vanilla',
+			// url: 'https://github.com/withastro/astro/tree/main/examples/with-tailwindcss',
+			url: 'https://github.com/amooo-ooo/astro-tailwind',
 			dir: './repo'
 		});
 
