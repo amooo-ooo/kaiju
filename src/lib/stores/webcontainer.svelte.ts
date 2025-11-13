@@ -27,7 +27,7 @@ class WebContainerStore {
 		await this.container.run('ls', ['-la']);
 
 		// Install Webcontainer dependencies
-		await this.container.run('npm', ['install']);
+		await this.container.run('pnpm', ['install']);
 
 		// Initialize Git
 		this.git = new Git(this.container, 'git.js');
@@ -45,7 +45,7 @@ class WebContainerStore {
 		await this.container.run('ls', ['-la'], { cwd: './repo' });
 
 		// Install project dependencies inside the cloned repository
-		await this.container.run('npm', ['install'], { cwd: './repo' });
+		await this.container.run('pnpm', ['install'], { cwd: './repo' });
 		
 		// Listen for the server to be ready
 		this.container.on('server-ready', (port, url) => {
@@ -54,7 +54,7 @@ class WebContainerStore {
 		});
 
 		// Start dev server from repo directory
-		await this.container.run('npm', ['run', 'dev'], { cwd: './repo' });
+		await this.container.run('pnpm', ['run', 'dev'], { cwd: './repo' });
 	}
 }
 
