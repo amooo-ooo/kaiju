@@ -1,5 +1,9 @@
 /** @satisfies {import('@webcontainer/api').FileSystemTree} */
 
+import packages from '$lib/webcontainer/package.json?raw';
+import git from '$lib/webcontainer/git.js?raw';
+
+/*
 export const files = {
     'index.js': {
       file: {
@@ -33,4 +37,18 @@ app.listen(port, () => {
           }`,
         },
     },
+};
+*/
+
+export const files = {
+  'package.json': {
+    file: {
+      contents: packages,
+    },
+  },
+  'git.js': {
+    file: {
+      contents: git,
+    },
+  }
 };

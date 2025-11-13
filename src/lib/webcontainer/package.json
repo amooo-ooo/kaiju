@@ -1,0 +1,7 @@
+{
+  "name": "webcontainer",
+  "version": "1.0.0",
+  "dependencies": {
+    "isomorphic-git": "^1.35.0"
+  }
+}

@@ -6,7 +6,6 @@
       "dependencies": {
         "@webcontainer/api": "^1.6.1",
         "@xterm/xterm": "^5.5.0",
-        "isomorphic-git": "^1.35.0",
       },
       "devDependencies": {
         "@eslint/compat": "^1.4.0",
@@ -21,6 +20,7 @@
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-svelte": "^3.12.4",
         "globals": "^16.4.0",
+        "isomorphic-git": "^1.35.0",
         "prettier": "^3.6.2",
         "prettier-plugin-svelte": "^3.4.0",
         "prettier-plugin-tailwindcss": "^0.7.1",

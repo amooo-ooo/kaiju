@@ -13,7 +13,7 @@
 	async function handleTextareaInput(content: string) {
 		textareaContent = content;
 		if (webcontainerStore.container) {
-			await webcontainerStore.container.fs.writeFile('/index.js', content);
+			await webcontainerStore.container.fs.writeFile('/git.js', content);
 		}
 	}
 
@@ -33,7 +33,7 @@
 
 		// Load initial content
 		if (webcontainerStore.container) {
-			const content = await webcontainerStore.container.fs.readFile('/index.js', 'utf-8');
+			const content = await webcontainerStore.container.fs.readFile('/git.js', 'utf-8');
 			textareaContent = content;
 		}
 	});
