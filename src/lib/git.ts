@@ -61,7 +61,7 @@ export class Git {
     });
 
     console.log("cool")
-    // Move contents of subdirectory to root
+    // move contents of subdirectory to root
     await this.#webcontainer.run('sh', ['-c', `cd "${dir}" && mv ${subdirectory}/* ${subdirectory}/.* . 2>/dev/null || true && rm -rf ${subdirectory}`]);
   }
 

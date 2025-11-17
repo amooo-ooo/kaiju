@@ -38,7 +38,7 @@ class WebContainerStore {
 			// url: 'https://github.com/arthelokyo/astrowind',
 			// url: 'https://github.com/rahxd1/simple-vite-template-vanilla',
 			// url: 'https://github.com/withastro/astro/tree/main/examples/with-tailwindcss',
-			url: 'https://github.com/amooo-ooo/astro-tailwind',
+			url: 'https://github.com/amooo-ooo/kaiju-starter',
 			dir: './repo'
 		});
 
