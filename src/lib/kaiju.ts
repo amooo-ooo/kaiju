@@ -2,6 +2,11 @@ import { WebContainer } from '@webcontainer/api';
 import type { BootOptions, SpawnOptions, WebContainerProcess } from '@webcontainer/api';
 import type { Terminal } from '@xterm/xterm';
 
+import astroConfigTemplate from '$lib/inspector/astro.config.mjs?raw';
+import inspectorPlugin from '$lib/inspector/inspector-plugin.ts?raw';
+import inspectorComponent from '$lib/inspector/inspector.js?raw';
+import inspectorStyles from '$lib/inspector/styles.css?raw';
+
 interface RunOptions extends SpawnOptions {
 	alias?: string;
 	concurrent?: boolean;
@@ -38,6 +43,54 @@ export class KaijuContainer extends WebContainer {
 		}
 		if (!concurrent && (await process.exit)) throw new Error(stdout);
 		return { ...process, stdout };
+	}
+
+	async mountInspector(path: string): Promise<void> {
+		await this.fs.mkdir(`${path}/.kaiju`, { recursive: true });
+
+		// ensure file exists
+		const files = {
+			'inspector.js': inspectorComponent,
+			'inspector.css': inspectorStyles,
+			'index.ts': inspectorPlugin,
+			'astro.config.mjs': astroConfigTemplate	
+		};
+
+		for (const [filename, content] of Object.entries(files)) {
+			const filePath = `${path}/.kaiju/${filename}`;
+			await this.fs.readFile(filePath, 'utf-8').catch(async () =>
+				await this.fs.writeFile(filePath, content, { encoding: 'utf-8' }));
+		}
+
+		let config = await this.fs.readFile(`${path}/.kaiju/astro.config.mjs`, 'utf-8');
+		// don't duplicate inspector
+		if (config.includes('KaijuInspector')) {
+			return;
+		}
+
+		// inject import statement
+		const importRegex = /(import.*?from 'astro\/config';)/;
+		config = config.replace(importRegex,
+			`$1\nimport { KaijuInspector } from './inspector-plugin';`
+		);
+
+		// add inspector to integrations array.
+		const integrationsRegex = /integrations:\s*\[(.*?)\]/s;
+		config = config.replace(
+			integrationsRegex,
+			(match, existingIntegrations) => {
+				// strip comments and whitespace
+				const strippedContent = existingIntegrations
+					.replace(/\/\*[\s\S]*?\*\//g, '') // remove multi-line comments
+					.replace(/\/\/.*/g, '') // remove single-line comments
+					.trim();
+
+				if (strippedContent) return `integrations: [KaijuInspector(), ${existingIntegrations}]`;
+				return `integrations: [KaijuInspector()]`;
+			}
+		);
+
+    	await this.fs.writeFile(`${path}/.kaiju/astro.config.mjs`, config, { encoding: 'utf-8' });	
 	}
 
 	static override async boot(options?: BootOptions): Promise<KaijuContainer> {

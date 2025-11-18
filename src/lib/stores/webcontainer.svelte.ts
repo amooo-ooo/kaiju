@@ -36,6 +36,7 @@ class WebContainerStore {
 
 		await this.git.smartClone({
 			// url: 'https://github.com/arthelokyo/astrowind',
+			// url: 'https://github.com/yashjawale/saral-theme-astro',
 			// url: 'https://github.com/rahxd1/simple-vite-template-vanilla',
 			// url: 'https://github.com/withastro/astro/tree/main/examples/with-tailwindcss',
 			url: 'https://github.com/amooo-ooo/kaiju-starter',
@@ -44,9 +45,14 @@ class WebContainerStore {
 
 		await this.container.run('ls', ['-la'], { cwd: './repo' });
 
+		await this.container.mountInspector('./repo');
+
+
+		await this.container.run('ls', ['-la'], { cwd: './repo/.kaiju' });
+
 		// Install project dependencies inside the cloned repository
 		await this.container.run('pnpm', ['install'], { cwd: './repo' });
-		
+
 		// Listen for the server to be ready
 		this.container.on('server-ready', (port, url) => {
 			console.log(`Server is ready at port ${port}: ${url}`);
@@ -54,7 +60,7 @@ class WebContainerStore {
 		});
 
 		// Start dev server from repo directory
-		await this.container.run('pnpm', ['run', 'dev'], { cwd: './repo' });
+		await this.container.run('pnpm', ['run', 'dev', '--', '--config', './.kaiju/astro.config.mjs'], { cwd: './repo' });
 	}
 }
 

@@ -1,0 +1,86 @@
+.inspector-element {
+    --inspector-font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    
+    --inspector-z-index: 999999;
+    --inspector-opacity: 0.6;
+    --inspector-pointer-events: none;
+    
+    /* Margin */
+    --inspector-margin-bg: rgba(247, 178, 102, 0.6); 
+    --inspector-margin-border: rgba(247, 178, 102, 0.8);
+    
+    /* Border */
+    --inspector-border-bg: rgba(250, 214, 91, 0.6); 
+    --inspector-border-outline: rgba(250, 214, 91, 0.8);
+    
+    /* Padding */
+    --inspector-padding-bg: rgba(147, 197, 114, 0.6); 
+    --inspector-padding-border: rgba(147, 197, 114, 0.8);
+    
+    /* Content */
+    --inspector-content-bg: rgba(111, 168, 220, 0.6);
+    --inspector-content-border: rgba(111, 168, 220, 0.8);
+    
+    --inspector-outline-color: #3899EC;
+}
+
+.inspector-element {
+    position: fixed;
+    z-index: var(--inspector-z-index);
+    /* pointer-events: var(--inspector-pointer-events); */
+    box-sizing: border-box;
+    opacity: var(--inspector-opacity);
+}
+
+.inspector-margin {
+    background-color: var(--inspector-margin-bg);
+    /* border: 1px solid var(--inspector-margin-border); */
+}
+
+.inspector-border {
+    background-color: var(--inspector-border-bg);
+    outline: 1px dashed var(--inspector-border-outline);
+}
+
+.inspector-padding {
+    background-color: var(--inspector-padding-bg);
+    /* border: 1px solid var(--inspector-padding-border); */
+}
+
+.inspector-content {
+    background-color: var(--inspector-content-bg);
+    border: 1px dashed var(--inspector-content-border);
+}
+
+.inspector-outline {
+    border: 2px solid var(--inspector-outline-color);
+    opacity: 1; 
+}
+
+.inspector-gridline-h {
+    height: 0;
+    border-top: 1px dashed var(--inspector-outline-color);
+    opacity: 1;
+}
+
+.inspector-gridline-v {
+    width: 0;
+    border-left: 1px dashed var(--inspector-outline-color);
+    opacity: 1;
+}
+
+.inspector-tooltip {
+    position: fixed;
+    z-index: 2147483647; 
+    transform: translateY(-100%);
+    margin-top: -1px;
+    pointer-events: none; 
+    
+    font-weight: 500;
+    font-family: var(--inspector-font-family);
+    color: var(--inspector-outline-color);
+    padding: 3px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: .8rem;
+}
